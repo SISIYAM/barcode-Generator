@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barcode Generator</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+
+</head>
+<body>
+    
+<h1>Barcode Generator Tutorial</h1>
+        <div>
+            <label>Barcode: </label>
+            <input name="barcode" type="text" onchange="generateBarcode(this.value)"/>
+        </div>
+        <div>
+            <svg id="barcode"></svg>
+        </div>
+
+<script>
+            function generateBarcode (value) {
+                JsBarcode('#barcode', value, {
+                    format: 'code128',
+                    displayValue: true,
+                });
+            }
+        </script>
+    
+</body>
+</html>
+
