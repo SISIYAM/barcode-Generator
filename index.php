@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Kaiadmin - Bootstrap 5 Admin Dashboard</title>
+    <title>Point of sale software By SEI Innovations</title>
     <meta
       content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
       name="viewport"
@@ -12,7 +12,8 @@
       href="assets/img/kaiadmin/favicon.ico"
       type="image/x-icon"
     />
-
+    <!-- barcode js -->
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
     <!-- Fonts and icons -->
     <script src="assets/js/plugin/webfont/webfont.min.js"></script>
     <script>
@@ -55,7 +56,7 @@
             >
               <div>
                 <h3 class="fw-bold mb-3">Dashboard</h3>
-                <h6 class="op-7 mb-2">Free Bootstrap 5 Admin Dashboard</h6>
+                
               </div>
               <div class="ms-md-auto py-2 py-md-0">
                 <a href="#" class="btn btn-label-info btn-round me-2">Manage</a>
@@ -199,23 +200,34 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr>
-                            <th scope="row">
-                              <button
-                                class="btn btn-icon btn-round btn-success btn-sm me-2"
-                              >
-                              
-                              </button>
-                              Payment from #10231
-                            </th>
-                            <td class="text-end">Mar 19, 2020, 2.45pm</td>
-                            <td class="text-end">$250.00</td>
+                          <?php 
+                          include 'includes/database.php';
+
+                          $show = new Database();
+
+                          $show->select('product','*',null,null,null,null);
+                          $result = $show->getResult();
+                          
+                          $count=1;
+                          foreach ($result as $row) {
+                            ?>
+                            <tr>
+                             <td><?=$count?></td> 
+                            <td class="text-end"><?=$row['code']?></td>
+                            <td class="text-end"><?=$row['name']?></td>
+                            <td class="text-end"><?=$row['qty']?></td>
+                            <td class="text-end"><?=$row['price']?></td>
+                            <td class="text-end"><?=$row['discount_type']?></td>
+                            <td class="text-end"><?=$row['discount']?></td>                           
                             <td class="text-end">
-                              <span class="badge badge-success">Completed</span>
+                              <button type="button" value="<?=$row['code']?>" class="badge badge-success border-0 generateBarcode">Generate Barcode</button>
                             </td>
                           </tr>
+                            <?php
+                            $count++;
+                          }
+                          ?>
                           
-            
                         </tbody>
                       </table>
                     </div>
@@ -225,6 +237,30 @@
             </div>
           </div>
         </div>
+
+        <!-- modal for show barcode -->
+<div class="modal fade bd-example-modal-lg" id="barcodeModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+  <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+        <button type="button" class="close closeModal" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-dark" id="printBar"><div id="output">
+        </div>
+      <svg id="barcode"></svg>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary closeModal" data-dismiss="modal">Close</button>
+        <button type="button" id="printBtn" class="btn btn-primary">Print</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
         <footer class="footer">
           <div class="container-fluid d-flex justify-content-between">
@@ -498,6 +534,57 @@
         lineColor: "#ffa534",
         fillColor: "rgba(255, 165, 52, .14)",
       });
+
+      $(".generateBarcode").click(function(){
+       const id = $(this).val();
+       $('#barcodeModal').modal("show");
+      
+       $.ajax({
+      type: "post",
+      url: "includes/ajax.php",
+      data: {
+        "code":id,
+        "search":"search"
+      },
+      success: function (response) {
+        $('#output').html(response);
+      }
+    });
+
+       generateBarcode(id);
+      });
+
+      $(".closeModal").click(function(){
+       $('#barcodeModal').modal("hide");
+      });
+
+      // print barcode
+      $("#printBtn").click(function(){
+        printdiv('printBar');
+      });
+
+      // generate barcode
+      function generateBarcode (code) {
+                JsBarcode('#barcode', code, {
+                    format: 'code128',
+                    displayValue: true,
+                    marginTop:-30,
+                    
+                });
+                
+            }
+ 
+    function printdiv(elem) {
+        let new_str = document.getElementById(elem).innerHTML;
+        let finalOut;
+        for (let index = 0; index < 5; index++) {
+          finalOut += new_str ;
+          
+        }
+        document.body.innerHTML = finalOut ;
+        window.print();
+   }
+
     </script>
   </body>
 </html>
