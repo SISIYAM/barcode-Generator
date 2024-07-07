@@ -11,8 +11,32 @@ if(isset($_POST['search'])){
     
     $output = "";
     foreach($result as $row){
-        $output = '<p class="" style="margin-bottom:-8px; color:#000000;" id="productName">'.$row['name'].'</p>
-        <p class="mx-5" style="color:#000000;" id="productPrice">Price: '.$row['price'].' Tk</p>';
+        $output = '
+        <div class="form-group">
+        <label class="control-label col-sm-2" for="product">Product:</label>
+        <div class="col-sm-10">
+          <input autocomplete="OFF" type="text" class="form-control" id="product" value="'.$row['name'].'" name="product">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-sm-2" for="product_id">Product ID:</label>
+        <div class="col-sm-10">
+          <input autocomplete="OFF" type="text" class="form-control" id="product_id" value="'.$row['code'].'" name="product_id">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-sm-2" for="rate">Price</label>
+        <div class="col-sm-10">          
+          <input autocomplete="OFF" type="text" class="form-control" id="rate" value="'.$row['price'].'"  name="rate">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-sm-2" for="print_qty">Barcode Quantity</label>
+        <div class="col-sm-10">          
+          <input autocomplete="OFF" type="print_qty" class="form-control" id="print_qty"  name="print_qty">
+        </div>
+      </div>
+     ';
     }
 
     echo $output;
